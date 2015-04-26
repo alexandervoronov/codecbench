@@ -8,6 +8,7 @@ import subprocess
 import os
 import re
 import time
+import copy
 
 def libvpx_handler(run):
     """ does a run. returns metric info 
@@ -26,8 +27,10 @@ def libvpx_handler(run):
             'num' : run['seq']['fpsnum'],
             'den' : run['seq']['fpsden'],
             'bitrate' : run['config']['bitrate'],
-            'output' : run['output'] +".webm",
+            'output' : run['output'] + '.vp9',
+            'fp_stats' : run['output'] + '.vp9' + '.fpf',
             'cpu' : run['config'].get('cpu', 16),
+            'passes' : run['config'].get('passes', 1),
             'input' : run['seq']['abspath'],
             'encoder' : os.path.abspath(root + "vpxenc"),
             'decoder' : os.path.abspath(root + "vpxdec"),
@@ -41,19 +44,24 @@ def libvpx_handler(run):
     try:
         
         clines = []
-        command = "{encoder} -v --cpu-used={cpu}  -p 1  --fps={num}/{den} --target-bitrate={bitrate} --codec={codec} -w {width} -h {height} -o {output} --limit={frame_count} {input}".format(**pars).split()
-        clines.append(command)
+        command = "{encoder} -v --cpu-used={cpu} --passes={passes} --pass=1 --fpf={fp_stats} --fps={num}/{den} --target-bitrate={bitrate} --codec={codec} -w {width} -h {height} -o {output} --limit={frame_count} {input}".format(**pars).split()
+        command_p1 = command
+        command_p2 = copy.deepcopy(command_p1)
+        command_p2[command_p2.index('--pass=1')] = '--pass=2'
+        clines.append(command_p1)
         # do encode
         startenc = time.time()
-        out = subprocess.check_output(command,stderr=subprocess.STDOUT).decode("utf-8")
+        out = subprocess.check_output(command_p1,stderr=subprocess.STDOUT).decode("utf-8")
+        if pars['passes'] > 1:
+            clines.append(command_p2)
+            p2_out = subprocess.check_output(command_p2,stderr=subprocess.STDOUT).decode("utf-8")
         stopenc = time.time()
         
-        #sample last line
-        #Pass 1/1 frame  300/300   136845B    3649b/f  109476b/s   23550 ms (12.74 fps)[K
-        search = re.compile("(\d+)B\s+(\d+)b/f\s+(\d+)b/s", re.MULTILINE ).search(out)
-        (totalbytes, bitsperframe, bps) = search.groups()
-
-        
+        # filesize
+        filesize = os.path.getsize(pars['output'])
+        framecount = run['seq']['frame_count']
+        fps = pars['num']/pars['den']
+        (totalbytes, bitsperframe, bps) = (filesize, filesize/framecount, (filesize*8)/(framecount/fps) )
         
         #do decode
         command = "{decoder}  {output} --i420  -o {reconfile}".format(**pars).split();
@@ -79,9 +87,9 @@ def libvpx_handler(run):
 codec = {
     "nickname": "libvpx",
     "profile": "libvpx",
-    "out_extension": "webm",
+    "out_extension": "vp9",
     "handler" : libvpx_handler,
-    "supported_pars" : {"bitrate":1000,"cpu":16,'libvpx_codec':'vp9'},
+    "supported_pars" : {'bitrate':1000,'cpu':16,'libvpx_codec':'vp9', 'passes':1},
     "ratesweep_pars" : ['bitrate']
 }
 
