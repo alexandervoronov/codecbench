@@ -26,9 +26,11 @@ def x265_handler(run):
             'num' : run['seq']['fpsnum'],
             'den' : run['seq']['fpsden'],
             'bitrate' : run['config']['bitrate'],
-            'preset' : run['config']['preset'] if 'preset' in run['config'] else 'slow',
+            'preset' : run['config'].get('preset', 'slow'),
+            'passes' : run['config'].get('passes', 1),
             'muxedoutput' : run['output'] +".mp4",
             'output' : run['output']+".265",
+            'fp_stats' : run['output']+".264" + '.fpstats',
             'input' : run['seq']['abspath'],
             'encoder' : os.path.abspath(root + "x265"),
             'decoder' : run['tools']['h265refdec'],
@@ -45,11 +47,23 @@ def x265_handler(run):
         
         clines = []
         
-        command = "{encoder} --fps={num}/{den} --bitrate={bitrate} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
-        clines.append(command)
+        command_p1 = ''
+        command_p2 = ''
+        if (pars['passes'] == 1):
+            command_p1 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
+            clines.append(command_p1)
+        else:
+            command_p1 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --pass=1 --stats={fp_stats} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
+            command_p2 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --pass=2 --stats={fp_stats} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
+            clines.append(command_p1)
+            clines.append(command_p2)
+        
         # do encode
         startenc = time.time()
-        out = subprocess.check_output(command,stderr=subprocess.STDOUT).decode("utf-8")
+        out = subprocess.check_output(command_p1,stderr=subprocess.STDOUT).decode("utf-8")
+        if (pars['passes'] > 1):
+            p2_out = subprocess.check_output(command_p2,stderr=subprocess.STDOUT).decode("utf-8")
+            out += p2_out
         stopenc = time.time()
         
         #filesize
@@ -89,9 +103,9 @@ def x265_handler(run):
 codec = {
     "nickname": "x265",
     "profile": "x265",
-    "out_extension": "mkv",
+    "out_extension": "265",
     "handler" : x265_handler,
-    "supported_pars" : {"bitrate":1000,"preset":"fast"},
+    "supported_pars" : {"bitrate":1000,"preset":"fast",'passes':1},
     "ratesweep_pars" : ['bitrate']
 }
 
