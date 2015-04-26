@@ -1,0 +1,77 @@
+{
+    "sequence_dirs": ["sequences"],
+    "codec_dirs" : ["codecpacks"],
+    "keeprecon" : false,
+    // "frame_count" : 300,
+    "runs" : [
+        {
+            "seq" : ["f1_bahrain_1080p"],
+            "codec" : ["libvpx"],
+            "bitrate_range" : [500,2600,500],
+            "libvpx_codec" : "vp9",
+            "cpu" : [4],
+            "passes" : [2],
+            "ignore" : true
+        },
+        {
+            "seq" : ["f1_bahrain_1080p"],
+            "codec" : ["libvpx"],
+            "bitrate_range" : [500,2600,500],
+            "libvpx_codec" : "vp8",
+            "cpu" : [4],
+            "passes" : [2],
+            "ignore" : true
+        },
+        {
+            "seq" : ["f1_bahrain_1080p"],
+            "codec" : ["x265"],
+            "bitrate_range" : [500,2600,500],
+            "preset" : ["fast"],
+            "passes" : [2],
+            "ignore" : true
+        },
+        {
+            "seq" : ["f1_bahrain_1080p"],
+            "codec" : ["hevchm"],
+            "bitrate_range" : [500,2600,500],
+            "preset" : "encoder_randomaccess_main",
+            "ignore" : true
+        },
+        {
+            "seq" : ["f1_bahrain_1080p"],
+            "codec" : ["x264"],
+            "bitrate_range" : [500,2600,500],
+            "preset" : ["fast", "slower"],
+            "passes" : [2],
+            "ignore" : false
+        }
+    ],
+    "reports" : {
+        "defaults" : {
+            "res" : "800x600",
+            "fontsize" : 8,
+            "format" : "svg",
+            "bitref_range" : [200,800],
+            "cabs_area" : false
+        },
+        "reports": [
+            {
+                "ref" : 0.98,
+                "metric" : "ssim",
+                "seqfef" : {
+                    "foremancif" : 0.97
+                },
+                "ignore" : true
+
+            },
+            {
+                "ref" : 40,
+                "metric" : "psnr",
+                "seqfef" : {
+                    "foremancif" : 40
+                },
+                "ignore" : false
+            }
+        ]
+    }
+}
