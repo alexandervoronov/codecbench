@@ -60,16 +60,18 @@ def x264_handler(run):
         filesize = os.path.getsize(pars['output'])
         
         #create muxed output for convenience
-        command = "{muxer} -add {output} {muxedoutput}".format(**pars).split()
-        out = subprocess.check_output(command,stderr=subprocess.STDOUT).decode("utf-8")
+        use_muxer = False
+        if use_muxer:
+            command = "{muxer} -add {output} {muxedoutput}".format(**pars).split()
+            out = subprocess.check_output(command,stderr=subprocess.STDOUT).decode("utf-8")
         
         framecount = run['seq']['frame_count']
         fps = pars['num']/pars['den']
         (totalbytes, bitsperframe, bps) = (filesize, filesize/framecount, (filesize*8)/(framecount/fps) )
         
-        
         #do decode.
-        if True:
+        use_vgtmpeg = False
+        if use_vgtmpeg:
             command = "{vgtmpeg}  -i {output} -y -map 0 -pix_fmt yuv420p -vsync 0 {reconfile}".format(**pars).split();
             clines.append(command)
             out = subprocess.check_output(command, stderr=subprocess.STDOUT)

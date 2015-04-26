@@ -54,9 +54,9 @@ def hevchm_handler(run):
         #Pass 1/1 frame  300/300   136845B    3649b/f  109476b/s   23550 ms (12.74 fps)[K
         filesize = os.path.getsize(pars['output'])
         
-        #create muxed output for convenience
-        command = "{muxer} -add {output} {muxedoutput}".format(**pars).split()
-        out = subprocess.check_output(command,stderr=subprocess.STDOUT).decode("utf-8")
+        # #create muxed output for convenience
+        # command = "{muxer} -add {output} {muxedoutput}".format(**pars).split()
+        # out = subprocess.check_output(command,stderr=subprocess.STDOUT).decode("utf-8")
         
         framecount = pars['frame_count']
         fps = pars['num']/pars['den']
