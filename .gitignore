@@ -1,0 +1,5 @@
+*.pyc
+runs/*
+reports/*
+*.yuv
+*.y4m
