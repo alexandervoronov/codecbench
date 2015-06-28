@@ -27,8 +27,8 @@ def libvpx_handler(run):
             'num' : run['seq']['fpsnum'],
             'den' : run['seq']['fpsden'],
             'bitrate' : run['config']['bitrate'],
-            'output' : run['output'] + '.vp9',
-            'fp_stats' : run['output'] + '.vp9' + '.fpf',
+            'output' : run['output'] + '.ivf',
+            'fp_stats' : run['output'] + '.ivf' + '.fpf',
             'cpu' : run['config'].get('cpu', 16),
             'passes' : run['config'].get('passes', 1),
             'input' : run['seq']['abspath'],
@@ -44,7 +44,7 @@ def libvpx_handler(run):
     try:
         
         clines = []
-        command = "{encoder} -v --cpu-used={cpu} --passes={passes} --pass=1 --fpf={fp_stats} --fps={num}/{den} --target-bitrate={bitrate} --codec={codec} -w {width} -h {height} -o {output} --limit={frame_count} {input}".format(**pars).split()
+        command = "{encoder} --cpu-used={cpu} --passes={passes} --pass=1 --fpf={fp_stats} --fps={num}/{den} --target-bitrate={bitrate} --codec={codec} -w {width} -h {height} -o {output} --limit={frame_count} {input}".format(**pars).split()
         command_p1 = command
         command_p2 = copy.deepcopy(command_p1)
         command_p2[command_p2.index('--pass=1')] = '--pass=2'
@@ -64,7 +64,7 @@ def libvpx_handler(run):
         (totalbytes, bitsperframe, bps) = (filesize, filesize/framecount, (filesize*8)/(framecount/fps) )
         
         #do decode
-        command = "{decoder}  {output} --i420  -o {reconfile}".format(**pars).split();
+        command = "{decoder}  {output} --rawvideo  -o {reconfile}".format(**pars).split();
         clines.append(command)
         out = subprocess.check_output(command)
         
@@ -87,7 +87,7 @@ def libvpx_handler(run):
 codec = {
     "nickname": "libvpx",
     "profile": "libvpx",
-    "out_extension": "vp9",
+    "out_extension": "ivf",
     "handler" : libvpx_handler,
     "supported_pars" : {'bitrate':1000,'cpu':16,'libvpx_codec':'vp9', 'passes':1},
     "ratesweep_pars" : ['bitrate']
