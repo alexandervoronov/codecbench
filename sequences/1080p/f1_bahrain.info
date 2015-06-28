@@ -1,0 +1,11 @@
+{
+    "filename"    : "f1_bahrain2015_197500_1920x1080_500.yuv",
+    "nickname"    : "f1_bahrain_1080p",
+    "format"      : "420P",
+    "frame_count" : 500,
+    "framesize"   : 3110400,
+    "width"       : "1920",
+    "height"      : "1080",
+    "fpsnum"      : 50,
+    "fpsden"      : 1
+}

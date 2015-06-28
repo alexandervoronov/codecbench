@@ -1,0 +1,11 @@
+{
+    "filename"    : "sintel_trailer_1920x816.yuv",
+    "nickname"    : "sintel_trailer_1080p",
+    "format"      : "420P",
+    "frame_count" : 500,
+    "framesize"   : 2350080,
+    "width"       : "1920",
+    "height"      : "816",
+    "fpsnum"      : 25,
+    "fpsden"      : 1
+}

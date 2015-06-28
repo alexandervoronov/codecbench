@@ -1,0 +1,11 @@
+{
+    "filename"    : "pedestrian_area_1920x1080.yuv",
+    "nickname"    : "pedestrian_area_1080p",
+    "format"      : "420P",
+    "frame_count" : 375,
+    "framesize"   : 3110400,
+    "width"       : "1920",
+    "height"      : "1080",
+    "fpsnum"      : 25,
+    "fpsden"      : 1
+}
