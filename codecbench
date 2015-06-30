@@ -699,6 +699,8 @@ def reports_generate(gconf,runconfig):
     
     """ generate reports """
     for report in runconfig['reports']['reports']:
+        if report.get('ignore', False):
+            continue
         r = {}
         r.update(defaults)
         r.update(report)
