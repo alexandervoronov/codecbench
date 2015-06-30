@@ -380,9 +380,9 @@ def report_find_x_from_y(plot,y):
     # line eq:  y = s*x + k  | x = (y-k) / s
     # s = y1-y0/x1-x0
     # k = y1 - s*x1
-    s = (y1-y0)/(x1-x0)
+    s = (y1-y0)/(x1-x0) if (x1 != x0) else (y1 - y0)
     k = y1 - s*x1
-    x = (y-k) / s
+    x = (y-k) / s if s != 0 else (y - k)
     return x
 
 def reports_rdcurve_create_plot(seqplots, report, repopt ):
