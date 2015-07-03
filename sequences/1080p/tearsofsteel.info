@@ -1,11 +1,11 @@
 {
-    "filename"    : "tearsofsteel_1920x804.yuv",
+    "filename"    : "tearsofsteel_1920x800.yuv",
     "nickname"    : "tearsofsteel_1080p",
     "format"      : "420P",
     "frame_count" : 500,
-    "framesize"   : 2315520,
+    "framesize"   : 2304000,
     "width"       : "1920",
-    "height"      : "804",
+    "height"      : "800",
     "fpsnum"      : 25,
     "fpsden"      : 1
 }
