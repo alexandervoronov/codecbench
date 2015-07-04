@@ -38,11 +38,13 @@ def x265_handler(run):
             'reconfile' : run['recon'],
             'vm' : run['tools']['vm'],
             'frame_count' : run['frame_count'],
-            'platform' : run['platform']
+            'platform' : run['platform'],
+            'tune_setting' : '--no-psy'
     }
     
-    
-    
+    if run['config'].get('tune', None):
+        pars['tune_setting'] = '--tune {}'.format(run['config']['tune'])
+
     try:
         
         clines = []
@@ -50,11 +52,11 @@ def x265_handler(run):
         command_p1 = ''
         command_p2 = ''
         if (pars['passes'] == 1):
-            command_p1 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
+            command_p1 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {tune_setting} {input}".format(**pars).split()
             clines.append(command_p1)
         else:
-            command_p1 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --pass=1 --stats={fp_stats} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
-            command_p2 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --pass=2 --stats={fp_stats} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {input}".format(**pars).split()
+            command_p1 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --pass=1 --stats={fp_stats} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {tune_setting} {input}".format(**pars).split()
+            command_p2 = "{encoder} --fps={num}/{den} --bitrate={bitrate} --pass=2 --stats={fp_stats} --input-res {width}x{height} --preset {preset} -o {output} --frames {frame_count} {tune_setting} {input}".format(**pars).split()
             clines.append(command_p1)
             clines.append(command_p2)
         
@@ -105,7 +107,7 @@ codec = {
     "profile": "x265",
     "out_extension": "265",
     "handler" : x265_handler,
-    "supported_pars" : {"bitrate":1000,"preset":"fast",'passes':1},
+    "supported_pars" : {"bitrate":1000,"preset":"fast", 'passes':1, 'tune':None},
     "ratesweep_pars" : ['bitrate']
 }
 

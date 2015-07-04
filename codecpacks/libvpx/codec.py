@@ -36,15 +36,17 @@ def libvpx_handler(run):
             'decoder' : os.path.abspath(root + "vpxdec"),
             'reconfile' : run['recon'],
             'vm' : run['tools']['vm'],
-            'frame_count' : run['frame_count']
+            'frame_count' : run['frame_count'],
+            'tune_setting' : ''
     }
     
-    
-    
+    if run['config'].get('tune', None):
+        pars['tune_setting'] = '--tune={}'.format(run['config']['tune'])
+
     try:
         
         clines = []
-        command = "{encoder} --cpu-used={cpu} --passes={passes} --pass=1 --fpf={fp_stats} --fps={num}/{den} --target-bitrate={bitrate} --codec={codec} -w {width} -h {height} -o {output} --limit={frame_count} {input}".format(**pars).split()
+        command = "{encoder} --cpu-used={cpu} --passes={passes} --pass=1 --fpf={fp_stats} --fps={num}/{den} --target-bitrate={bitrate} --codec={codec} -w {width} -h {height} -o {output} --limit={frame_count} {tune_setting} {input}".format(**pars).split()
         command_p1 = command
         command_p2 = copy.deepcopy(command_p1)
         command_p2[command_p2.index('--pass=1')] = '--pass=2'
@@ -89,7 +91,7 @@ codec = {
     "profile": "libvpx",
     "out_extension": "ivf",
     "handler" : libvpx_handler,
-    "supported_pars" : {'bitrate':1000,'cpu':16,'libvpx_codec':'vp9', 'passes':1},
+    "supported_pars" : {'bitrate':1000,'cpu':16,'libvpx_codec':'vp9', 'passes':1, 'tune':None},
     "ratesweep_pars" : ['bitrate']
 }
 
